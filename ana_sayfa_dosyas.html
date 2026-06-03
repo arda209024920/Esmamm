@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sonsuza Dek Sen...</title>
+    
+    <!-- Premium Yazı Tipleri ve İkon Kütüphaneleri -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Montserrat:wght@200;300;400;600&family=Alex+Brush&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS (Ekstra esneklik ve hızlı hizalama için) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Modüler Stil Dosyamız (styles.css) -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Arka Planda Süzülecek Canlı Parçacıklar İçin Tuval -->
+    <canvas id="particleCanvas"></canvas>
+    
+    <!-- Bilgisayardan Şarkı Yüklemek İçin Gizli Girdi Alanı -->
+    <input type="file" id="fileInput" accept="audio/*" class="hidden" onchange="handleFileSelect(event)">
+
+    <!-- 🎵 PREMIUM MÜZİK ÇALAR GUI (Arayüzü) -->
+    <div class="music-player-gui">
+        <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="album-art" id="albumDisk">
+                    <!-- Romantik Albüm Kapak Resmi -->
+                    <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=150&q=80" alt="Albüm Kapak">
+                </div>
+                <div class="min-w-0">
+                    <h3 class="text-xs md:text-sm font-bold text-[#7b00ff] truncate" id="trackTitle">Aşkımızın Şarkısı</h3>
+                    <p class="text-[10px] md:text-xs text-[#5a0eb5] font-semibold truncate" id="trackArtist">Bizim Albümümüz</p>
+                </div>
+            </div>
+
+            <!-- Müzik Çalar Butonları -->
+            <div class="flex items-center gap-1">
+                <button class="gui-btn" title="Önceki Şarkı" onclick="changeTrack(-1)">
+                    <i class="fa-solid fa-backward-step"></i>
+                </button>
+                <button class="gui-btn play-pause-btn" title="Oynat / Durdur" onclick="togglePlayPause()">
+                    <i class="fa-solid fa-play" id="playIcon"></i>
+                </button>
+                <button class="gui-btn" title="Sonraki Şarkı" onclick="changeTrack(1)">
+                    <i class="fa-solid fa-forward-step"></i>
+                </button>
+                <button class="gui-btn" title="Kendi Şarkını Yükle" onclick="triggerFileSelect()">
+                    <i class="fa-solid fa-file-audio"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Şarkı Süresi ve İlerleme Çubuğu -->
+        <div>
+            <div class="progress-container" id="progressBarContainer" onclick="seekAudio(event)">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-[#5a0eb5] font-semibold mt-1">
+                <span id="currentTime">00:00</span>
+                <span id="totalDuration">00:00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sitenin Ortasındaki Ana Kart -->
+    <div class="premium-card">
+        <h1 id="loveTitle">Yükleniyor...</h1>
+        <div class="subtitle" id="loveSubtitle">Yükleniyor...</div>
+        
+        <!-- Çift Renkli Özel Ying-Yang Kalp Grubu (Net renkler ve sade tasarım) -->
+        <div class="heart-viewport" id="premiumHeartBtn" onclick="onHeartClick(event)">
+            <div class="heart-3d-wrapper" id="heartWrapper">
+                <svg viewBox="0 0 100 90" width="100%" height="100%">
+                    <defs>
+                        <!-- Net ve Canlı Degrade Renk Atamaları -->
+                        <linearGradient id="luxuryPurple" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#bf55ec" />
+                            <stop offset="50%" stop-color="#8e44ad" />
+                            <stop offset="100%" stop-color="#4a154b" />
+                        </linearGradient>
+                        <linearGradient id="luxuryYellow" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#fff176" />
+                            <stop offset="50%" stop-color="#f1c40f" />
+                            <stop offset="100%" stop-color="#d35400" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Sol Bölüm (Net Mor Yarım) -->
+                    <path d="M 50,85 C 18,60 2,42 2,24 C 2,9.5 14,1 28,1 C 37,1 45,6 50,13 Z" fill="url(#luxuryPurple)" />
+                    
+                    <!-- Sağ Bölüm (Net Sarı Yarım) -->
+                    <path d="M 50,85 C 82,60 98,42 98,24 C 98,9.5 86,1 72,1 C 63,1 55,6 50,13 Z" fill="url(#luxuryYellow)" />
+
+                    <!-- Ortadaki Net Bölme Çizgisi -->
+                    <path d="M 50,13 L 50,85" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Kalbin Altındaki Bilgilendirme Metinleri -->
+        <p class="text-[#1a0022] text-xs md:text-sm font-bold tracking-wider mt-7 uppercase" id="loveHeartNote">Yükleniyor...</p>
+        <span class="block text-[11px] text-[#440066] mt-2 font-semibold italic cursor-pointer animate-pulse" id="loveHeartSubNote">Yükleniyor...</span>
+
+        <!-- Kalbe Tıklanınca Açılacak Premium Mektup Bölümü -->
+        <div class="parchment-paper" id="paperContent">
+            <p class="font-bold text-xl md:text-2xl text-[#8e44ad] mb-3" style="font-family: 'Cormorant Garamond', serif; letter-spacing: 2.5px;" id="loveLetterHeader">Sevgilime;</p>
+            <span id="elegantTyping" class="text-base md:text-lg font-semibold leading-relaxed block text-[#1a0022]"></span>
+        </div>
+    </div>
+
+    <!-- Modüler Kod Dosyamız (script.js) -->
+    <script src="script.js"></script>
+</body>
+</html>
